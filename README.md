@@ -1,6 +1,7 @@
 # DbMailer
 
 [![Build Status](https://travis-ci.org/paviensky/db_mailer.png?branch=master)](https://travis-ci.org/paviensky/db_mailer)
+[![Code Climate](https://codeclimate.com/github/paviensky/db_mailer.png)](https://codeclimate.com/github/paviensky/db_mailer)
 
 This gem allows you to save e-mails into the database instead of sending them. This
 is quite handy in dev/staging environments when you really don't want to send
