@@ -53,6 +53,8 @@ module DbMailer
     def deliver!(mail)
       # check validity
       check_delivery_params(mail)
+      validate!(mail)
+
       create_factory()
 
       persist_email(mail)
@@ -77,6 +79,31 @@ module DbMailer
 
       unless @factory.respond_to?(:create!)
         raise ArgumentError.new("configured factory '#{@factory_name}' is not a valid class (missing #create! method)")
+      end
+    end
+
+    ##
+    # Validates given e-mail and raises an exception if it's not valid
+    #
+    # == Parameters
+    #
+    # [email:Mail] mail object to validate
+    #
+    # == Returns
+    #
+    # In case of problem it raises and exception.
+    #
+    def validate!(mail)
+      %w(from to).each do |field_name|
+        field = mail[field_name]
+        if field.nil? || mail.send(field_name).nil?
+          raise ArgumentError.new("#{field_name} is missing")
+        end
+
+        if field.errors.present?
+          error_text = field.errors[0] && field.errors[0][2]
+          raise ArgumentError.new(error_text || "invalid value in '#{field_name}' field")
+        end
       end
     end
 

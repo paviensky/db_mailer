@@ -103,6 +103,13 @@ describe DbMailer::Delivery do
   # ============================================================================
 
   describe 'error handling' do
+    before :each do
+      ActionMailer::Base.db_settings = {
+        :factory => factory
+      }
+      ActionMailer::Base.deliveries.clear
+    end
+
     it 'spectacularly fails when factory is not specified' do
       ActionMailer::Base.raise_delivery_errors = true
       ActionMailer::Base.db_settings = {
@@ -153,6 +160,21 @@ describe DbMailer::Delivery do
       }.to raise_error(ArgumentError)
     end
 
+    it 'fails when sender is invalid e-mail address' do
+      ActionMailer::Base.raise_delivery_errors = true
+      mail.from = "Foo Bar <foo@bar / bar@bar.com>"
+      expect {
+        mail.deliver
+      }.to raise_error(ArgumentError)
+    end
+
+    it 'fails when receiver is invalid e-mail address' do
+      ActionMailer::Base.raise_delivery_errors = true
+      mail.to = "Foo Bar <foo@bar / bar@bar.com>"
+      expect {
+        mail.deliver
+      }.to raise_error(ArgumentError)
+    end
   end
 
   # ============================================================================
