@@ -239,7 +239,7 @@ describe DbMailer::Delivery do
       }
       mail.deliver
 
-      expect(has_been_called).to be_true
+      expect(has_been_called).to be(true)
     end
   end
 end
