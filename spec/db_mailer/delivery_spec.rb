@@ -170,6 +170,31 @@ describe DbMailer::Delivery do
         mail.deliver
       }.to raise_error(ArgumentError)
     end
+
+    it 'fails when all to, cc, bcc are empty' do
+      mail.to = ""
+      expect {
+        mail.deliver
+      }.to raise_error(ArgumentError)
+
+      mail.to = nil
+      expect {
+        mail.deliver
+      }.to raise_error(ArgumentError)
+    end
+
+    it "doesn't fail with empty to but with bcc/cc present" do
+      mail.to = nil
+      mail.bcc = "foo@bar.com"
+      mail.deliver
+
+      expect(factory).to have_received(:create!).with(
+        from: anything,
+        to: "",
+        subject: anything,
+        content: anything
+      )
+    end
   end
 
   # ============================================================================

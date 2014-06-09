@@ -96,8 +96,15 @@ module DbMailer
     def validate!(mail)
       %w(from to).each do |field_name|
         field = mail[field_name]
-        if field.nil? || mail.send(field_name).nil?
-          raise ArgumentError.new("#{field_name} is missing")
+        # special handling for +to+
+        if field_name == "to"
+          if (field.nil? || mail.send(field_name).nil?) && (mail.bcc.present? || mail.cc.present?)
+            next
+          end
+        else
+          if field.nil? || mail.send(field_name).nil?
+            raise ArgumentError.new("#{field_name} is missing")
+          end
         end
 
         if field.errors.present?
@@ -112,7 +119,7 @@ module DbMailer
     #
     def persist_email(mail)
       mail.from.each do |sender|
-        mail.to.each do |recipient|
+        (mail.to || [""]).each do |recipient|
           @factory.create!(
             :from => sender,
             :to => recipient,
