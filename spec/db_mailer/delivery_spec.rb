@@ -108,10 +108,10 @@ describe DbMailer::Delivery do
         :factory => factory
       }
       ActionMailer::Base.deliveries.clear
+      ActionMailer::Base.raise_delivery_errors = true
     end
 
     it 'spectacularly fails when factory is not specified' do
-      ActionMailer::Base.raise_delivery_errors = true
       ActionMailer::Base.db_settings = {
       }
       expect {
@@ -120,7 +120,6 @@ describe DbMailer::Delivery do
     end
 
     it 'spectacularly fails when factory is not a valid class' do
-      ActionMailer::Base.raise_delivery_errors = true
       ActionMailer::Base.db_settings = {
         :factory => "FooBar"
       }
@@ -145,7 +144,6 @@ describe DbMailer::Delivery do
     end
 
     it 'fails when there is no recipient' do
-      ActionMailer::Base.raise_delivery_errors = true
       mail.to = ""
       expect {
         mail.deliver
@@ -153,7 +151,6 @@ describe DbMailer::Delivery do
     end
 
     it 'fails when there is no sender' do
-      ActionMailer::Base.raise_delivery_errors = true
       mail.from = ""
       expect {
         mail.deliver
@@ -161,7 +158,6 @@ describe DbMailer::Delivery do
     end
 
     it 'fails when sender is invalid e-mail address' do
-      ActionMailer::Base.raise_delivery_errors = true
       mail.from = "Foo Bar <foo@bar / bar@bar.com>"
       expect {
         mail.deliver
@@ -169,7 +165,6 @@ describe DbMailer::Delivery do
     end
 
     it 'fails when receiver is invalid e-mail address' do
-      ActionMailer::Base.raise_delivery_errors = true
       mail.to = "Foo Bar <foo@bar / bar@bar.com>"
       expect {
         mail.deliver
