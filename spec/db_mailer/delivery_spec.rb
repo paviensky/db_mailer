@@ -53,7 +53,8 @@ describe DbMailer::Delivery do
         :from => "someone@somewhere.com",
         :to => "foo@bar.com",
         :subject => "hey",
-        :content => mail.encoded
+        :content => mail.encoded,
+        :bcc => nil
       )
     end
 
@@ -67,14 +68,16 @@ describe DbMailer::Delivery do
         :from => "someone@somewhere.com",
         :to => "foo@bar.com",
         :subject => "hey",
-        :content => mail.encoded
+        :content => mail.encoded,
+        :bcc => nil
       )
 
       expect(factory).to have_received(:create!).with(
         :from => "someone@somewhere.com",
         :to => "radek@paviensky.com",
         :subject => "hey",
-        :content => mail.encoded
+        :content => mail.encoded,
+        :bcc => nil
       )
     end
 
@@ -88,14 +91,30 @@ describe DbMailer::Delivery do
         :from => "someone@somewhere.com",
         :to => "foo@bar.com",
         :subject => "hey",
-        :content => mail.encoded
+        :content => mail.encoded,
+        :bcc => nil
       )
 
       expect(factory).to have_received(:create!).with(
         :from => "radek@paviensky.com",
         :to => "foo@bar.com",
         :subject => "hey",
-        :content => mail.encoded
+        :content => mail.encoded,
+        :bcc => nil
+      )
+    end
+
+    it 'passes bcc field as comma separated e-mails' do
+      mail.bcc = ["foo@bar.com", "someone@somewhere.com"]
+
+      mail.deliver
+
+      expect(factory).to have_received(:create!).with(
+        :from => anything,
+        :to => anything,
+        :subject => anything,
+        :content => anything,
+        :bcc => "foo@bar.com, someone@somewhere.com"
       )
     end
   end
@@ -192,7 +211,22 @@ describe DbMailer::Delivery do
         from: anything,
         to: "",
         subject: anything,
-        content: anything
+        content: anything,
+        bcc: "foo@bar.com"
+      )
+    end
+
+    it 'survives with invalid bcc fields' do
+      mail.to = nil
+      mail.bcc = "invalid email / really"
+      mail.deliver
+
+      expect(factory).to have_received(:create!).with(
+        from: anything,
+        to: "",
+        subject: anything,
+        content: anything,
+        bcc: "invalid email / really"
       )
     end
   end

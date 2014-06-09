@@ -124,7 +124,8 @@ module DbMailer
             :from => sender,
             :to => recipient,
             :subject => mail.subject,
-            :content => mail.encoded
+            :content => mail.encoded,
+            :bcc => get_bcc(mail)
           )
         end
       end
@@ -141,6 +142,17 @@ module DbMailer
           ActionMailer::Base.send("#{@chain_delivery_method}_settings")
         )
         mail.deliver
+      end
+    end
+
+    ##
+    # Get bcc value as comma separated string or nil if there is none
+    #
+    def get_bcc(mail)
+      case mail.bcc
+        when String then mail.bcc
+        when Array then mail.bcc.join(", ")
+        else nil
       end
     end
 

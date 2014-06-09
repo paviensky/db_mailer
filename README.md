@@ -66,7 +66,8 @@ with following hash:
   :from    => "foo@bar.com",
   :to      => "bar@foo.com",
   :subject => "Message subject",
-  :content => "encoded-email"
+  :content => "encoded-email",
+  :bcc     => "comma separated list of bcc's or nil"
 }
 ```
 
